@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
+
+  
 //register route
 router.post("/register", async (req, res) => {
     const { username, email, password ,confirmPassword} = req.body;
@@ -47,9 +49,12 @@ router.post("/login", async (req, res) => {
     // Create JWT token
     const payload = {
         id: user._id,
+        
     };
+    const username=user.username;
     const token = jwt.sign(payload, process.env.JWT_SECRET);
-    res.status(200).json({ token });
+    res.status(200).json({ token,username,message:"login successfully"});
+
 })
 
 
