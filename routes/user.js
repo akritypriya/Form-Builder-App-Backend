@@ -170,34 +170,31 @@ router.delete("/folders/:id", async (req, res) => {
     }
 });
 
-// Save Workspace Data
-router.post("/workspace/save", async (req, res) => {
+//save workspace
+router.post('/workspace/save', async (req, res) => {
     try {
-        const { elements, formName, userId } = req.body;
-        if (!formName || !elements || elements.length === 0) {
-            return res.status(400).json({ message: "Form name and elements are required" });
-        }
-        const workspace = new Workspace({ formName, elements, createdBy: userId });
-        await workspace.save();
-        res.status(201).json({ message: "Workspace saved successfully", workspace });
+        const { workspaceName, elements, createdBy } = req.body;
+        if (!workspaceName || !elements || !Array.isArray(elements)) {
+            return res.status(400).json({ message: "Invalid data. 'workspaceName' and 'elements' are required." });
+        } 
+        const workspaceData = {
+            workspaceName,
+            elements,
+            createdBy, 
+        };
+        const newWorkspace = new Workspace(workspaceData);
+        await newWorkspace.save();
+
+        res.status(201).json({
+            message: "Workspace saved successfully",
+            workspace: newWorkspace,
+        });
     } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
+        console.error("Error saving workspace:", error.message);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 });
 
-// Fetch Workspace Data
-router.get("/workspace/:id", async (req, res) => {
-    try {
-        const { id } = req.params;
-        const workspace = await Workspace.findById(id);
-        if (!workspace) {
-            return res.status(404).json({ message: "Workspace not found" });
-        }
-        res.status(200).json({ workspace });
-    } catch (error) {
-        res.status(500).json({ message: "Server error", error: error.message });
-    }
-});
 
 
 module.exports = router;

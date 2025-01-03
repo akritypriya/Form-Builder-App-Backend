@@ -1,16 +1,17 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const elementSchema = new mongoose.Schema({
-    label: String,
-    hasInput: Boolean,
-    isRequired: Boolean,
-    description: String,
+    label: { type: String, required: true },
+    hasInput: { type: Boolean, required: true },
+    description: { type: String },
+    isRequired: { type: Boolean, default: false },
 });
 
 const workspaceSchema = new mongoose.Schema({
-    formName: { type: String, required: true },
+    workspaceName: { type: String, required: true },
     elements: [elementSchema],
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-}, { timestamps: true });
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Assuming you have a User model
+    createdAt: { type: Date, default: Date.now },
+});
 
-module.exports = mongoose.model("Workspace", workspaceSchema);
+module.exports = mongoose.model('Workspace', workspaceSchema);
